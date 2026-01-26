@@ -49,3 +49,8 @@
 **.turbo/
 **.parcel-cache/
 **/.vercel/
+
+**/*.tsbuildinfo
+**/.eslintcache
+**/.env.*
+**/.npmrc
