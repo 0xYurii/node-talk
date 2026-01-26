@@ -14,9 +14,12 @@ authRoute.post(
     "/login",
     passport.authenticate("local"),
     (req: Request, res: Response) => {
+        if (!req.user) return res.status(401).json({ error: "Login failed" });
+
+        const { password, ...safeUser } = req.user as any;
         res.status(201).json({
             message: "Logged in!",
-            user: req.user,
+            user: safeUser,
         });
     },
 );
