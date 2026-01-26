@@ -1,9 +1,12 @@
 import { Router } from "express";
 import passport from "passport";
 import { Request, Response, NextFunction } from "express";
-import { signup, getCurrentUser } from "../controllers/authController";
+import {
+    signup,
+    getCurrentUser,
+    loginAsGuest,
+} from "../controllers/authController";
 import { requireAuth } from "../middleware/requireAuth";
-import { get } from "https";
 
 const authRoute = Router();
 
@@ -27,6 +30,9 @@ authRoute.post("/logout", (req: Request, res: Response) => {
         res.json({ message: "Logged out!" });
     });
 });
+
+//guest login
+authRoute.post("/guest", loginAsGuest);
 
 //get current user route
 authRoute.get("/me", requireAuth, getCurrentUser);
