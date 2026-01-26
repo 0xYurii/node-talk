@@ -29,6 +29,21 @@ async function main() {
     // 3. CREATE USERS
     const users = [];
 
+    // Create the Guest User specifically
+    const guestUser = await prisma.user.upsert({
+        where: { email: "guest@nodetalk.com" },
+        update: {},
+        create: {
+            email: "guest@nodetalk.com",
+            username: "GuestUser",
+            password: await bcrypt.hash("guestpassword123", 10),
+            avatarUrl:
+                "https://zqsqxpnhcgkngfjrldkn.supabase.co/storage/v1/object/public/avatars/photo_2025-08-07_09-45-39.jpg",
+            isPrivate: false,
+        },
+    });
+    console.log("👻 Guest user ready.");
+
     for (let i = 0; i < TOTAL_USERS; i++) {
         // Generate a new user
         const user = await prisma.user.create({
