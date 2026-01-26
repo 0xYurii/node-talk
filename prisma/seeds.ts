@@ -1,0 +1,122 @@
+import { PrismaPg } from "@prisma/adapter-pg";
+import { FollowStatus, PrismaClient } from "../generated/prisma";
+import { faker } from "@faker-js/faker";
+import bcrypt from "bcryptjs";
+
+const adapter = new PrismaPg({
+    connectionString: process.env.DATABASE_URL,
+});
+const prisma = new PrismaClient({ adapter });
+
+async function main() {
+    console.log("🌱 Starting seed...");
+
+    // 1. CLEANUP:
+    await prisma.like.deleteMany();
+    await prisma.comment.deleteMany();
+    await prisma.post.deleteMany();
+    await prisma.follow.deleteMany();
+    await prisma.user.deleteMany();
+
+    console.log("🧹 Database cleaned.");
+
+    // 2. CONFIG
+    const TOTAL_USERS = 20;
+    const POSTS_PER_USER = 5;
+
+    const hashedPassword = await bcrypt.hash("password123", 10);
+
+    // 3. CREATE USERS
+    const users = [];
+
+    for (let i = 0; i < TOTAL_USERS; i++) {
+        // Generate a new user
+        const user = await prisma.user.create({
+            data: {
+                username: faker.internet.username() + i, // Append i to ensure uniqueness
+                email: faker.internet.email(),
+                password: hashedPassword,
+                avatarUrl: faker.image.avatar(),
+                isPrivate: faker.datatype.boolean(),
+                // Create posts immediately for this user
+                posts: {
+                    create: Array.from({ length: POSTS_PER_USER }).map(() => ({
+                        title: faker.lorem.sentence(), // Since your schema requires title
+                        content: faker.lorem.paragraph(),
+                    })),
+                },
+            },
+        });
+        users.push(user);
+    }
+
+    console.log(`👤 Created ${users.length} users with posts.`);
+
+    // 4. CREATE INTERACTIONS (Likes, Comments, Follows)
+    // Now that users exist, we can link them up.
+
+    const allPosts = await prisma.post.findMany();
+
+    for (const post of allPosts) {
+        // Randomly select a few users to like this post
+        const randomUsers = faker.helpers.arrayElements(
+            users,
+            faker.number.int({ min: 0, max: 5 }),
+        );
+
+        for (const liker of randomUsers) {
+            // Don't let users like their own post (optional logic, but realistic)
+            if (liker.id !== post.authorId) {
+                await prisma.like.create({
+                    data: {
+                        userId: liker.id,
+                        postId: post.id,
+                    },
+                });
+            }
+        }
+
+        // Add a comment
+        if (Math.random() > 0.5) {
+            // 50% chance of a comment
+            const commenter = users[Math.floor(Math.random() * users.length)];
+            await prisma.comment.create({
+                data: {
+                    content: faker.lorem.sentence(),
+                    userId: commenter.id,
+                    postId: post.id,
+                },
+            });
+        }
+    }
+
+    // 5. CREATE FOLLOWS
+    for (const user of users) {
+        const potentialFollows = users.filter((u) => u.id !== user.id);
+        const following = faker.helpers.arrayElements(
+            potentialFollows,
+            faker.number.int({ min: 1, max: 5 }),
+        );
+
+        for (const target of following) {
+            await prisma.follow.create({
+                data: {
+                    followerId: user.id,
+                    followingId: target.id,
+                    status: FollowStatus.ACCEPTED, // Assume accepted for now
+                },
+            });
+        }
+    }
+
+    console.log("🌱 Seeding finished.");
+}
+
+main()
+    .catch((e) => {
+        console.error(e);
+        process.exit(1);
+    })
+    .finally(async () => {
+        await prisma.$disconnect();
+    });
