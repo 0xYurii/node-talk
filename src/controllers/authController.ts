@@ -40,5 +40,14 @@ export const signup = asyncHandler(async (req: Request, res: Response) => {
         },
     });
 
-    return res.status(201).json({ user });
+    return res.status(201).json({ message: "User created!", user });
 });
+
+export const getCurrentUser = asyncHandler(
+    async (req: Request, res: Response) => {
+        return res.status(201).json({
+            message: "About me",
+            user: req.user,
+        });
+    },
+);
