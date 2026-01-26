@@ -40,7 +40,12 @@ export const signup = asyncHandler(async (req: Request, res: Response) => {
         },
     });
 
-    return res.status(201).json({ message: "User created!", user });
+    req.login(user, (err) => {
+        if (err) {
+            return res.status(500).json({ error: "Login failed" });
+        }
+        return res.status(201).json({ message: "User created!", user });
+    });
 });
 
 export const getCurrentUser = asyncHandler(
