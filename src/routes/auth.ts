@@ -18,7 +18,7 @@ authRoute.post(
     },
 );
 
-authRoute.post("/singup", signup);
+authRoute.post("/signup", signup);
 
 //log out route
 authRoute.post("/logout", (req: Request, res: Response) => {
