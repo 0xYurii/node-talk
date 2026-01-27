@@ -11,7 +11,8 @@
     },
     "scripts": {
         "dev": "nodemon --config nodemon.json",
-        "test": "vitest run",
+        "test:db": "node scripts/test-db-migrate.js",
+        "test": "npm run test:db && vitest run",
         "test:watch": "vitest"
     },
     "repository": {
