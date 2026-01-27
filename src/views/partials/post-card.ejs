@@ -1,0 +1,34 @@
+<% const author = post.user || post.author || {}; %>
+<div class="post-card">
+    <div class="post-header">
+        <img src="<%= author.avatarUrl || 'https://zqsqxpnhcgkngfjrldkn.supabase.co/storage/v1/object/public/avatars/photo_2025-08-07_09-45-39.jpg' %>" alt="avatar" class="avatar-small">
+        <div class="post-info">
+            <span class="username">@<%= author.username || 'unknown' %></span>
+            <span class="date"><%= new Date(post.createdAt).toLocaleDateString() %></span>
+        </div>
+
+        <% if (locals.currentUser && locals.currentUser.id === post.authorId) { %>
+            <form action="/posts/<%= post.id %>/delete" method="POST" class="delete-form">
+                <button type="submit" class="btn-icon">🗑️</button>
+            </form>
+        <% } %>
+    </div>
+
+    <div class="post-content">
+        <h3><%= post.title %></h3>
+        <% if (post.content) { %>
+            <p><%= post.content %></p>
+        <% } %>
+    </div>
+
+    <div class="post-footer">
+        <div class="interactions">
+            <button class="btn-like <%= post.likes && post.likes.length > 0 ? 'liked' : '' %>">
+                ❤️ <%= post._count ? post._count.likes : 0 %>
+            </button>
+            <a href="/posts/<%= post.id %>" class="btn-comment">
+                💬 <%= post._count ? post._count.comments : 0 %>
+            </a>
+        </div>
+    </div>
+</div>

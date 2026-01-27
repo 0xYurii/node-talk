@@ -6,6 +6,7 @@ import authRoute from './routes/auth';
 import sessionMiddleware from './config/session';
 import passport from './config/passport';
 import path from 'path';
+import postRoute from './routes/posts';
 
 dotenv.config();
 
@@ -46,6 +47,8 @@ app.get('/', (req, res) => {
 });
 
 app.use('/auth', authRoute);
+
+app.use('/posts', postRoute);
 
 // Error handler (last)
 app.use(errorHandler);

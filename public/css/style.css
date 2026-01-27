@@ -1,3 +1,56 @@
-body {
-    font-family: Arial, sans-serif;
+/* Feed Layout */
+.feed-container {
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+/* Create Post Box */
+.create-post-box {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.create-post-box textarea {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+/* Post Card */
+.post-card {
+    background: white;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    padding: 1rem;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0.5rem;
+}
+
+.avatar-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-footer {
+    margin-top: 1rem;
+    border-top: 1px solid #eee;
+    padding-top: 0.5rem;
+}
+
+.btn-like.liked {
+    color: red;
 }
