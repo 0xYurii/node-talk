@@ -6,6 +6,7 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as GitHubStrategy } from 'passport-github2';
 import prisma from './prisma';
 import crypto from 'crypto';
+type UserWithId = { id: number };
 
 passport.use(
     new LocalStrategy(
@@ -119,7 +120,7 @@ passport.use(
 
 // store only the id of user
 passport.serializeUser<number>((user, done) => {
-    done(null, user.id);
+    done(null, (user as UserWithId).id);
 });
 
 passport.deserializeUser<number>(async (id, done) => {
