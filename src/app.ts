@@ -38,9 +38,11 @@ app.use('/auth', authRoute);
 // Error handler (last)
 app.use(errorHandler);
 
-// Start
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// Start the server only when this file is executed directly.
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
 
 export default app;
