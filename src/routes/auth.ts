@@ -6,6 +6,10 @@ import { requireAuth } from '../middleware/requireAuth';
 
 const authRoute = Router();
 
+authRoute.get('/login', (_req: Request, res: Response) => {
+    res.render('auth/login');
+});
+
 authRoute.post('/login', passport.authenticate('local'), (req: Request, res: Response) => {
     if (!req.user) return res.status(401).json({ error: 'Login failed' });
 
@@ -17,6 +21,10 @@ authRoute.post('/login', passport.authenticate('local'), (req: Request, res: Res
 });
 
 authRoute.post('/signup', signup);
+
+authRoute.get('/signup', (_req: Request, res: Response) => {
+    res.render('auth/signup');
+});
 
 //log out route
 authRoute.post('/logout', (req: Request, res: Response) => {

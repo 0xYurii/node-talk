@@ -5,6 +5,7 @@ import { errorHandler } from './middleware/error';
 import authRoute from './routes/auth';
 import sessionMiddleware from './config/session';
 import passport from './config/passport';
+import path from 'path';
 
 dotenv.config();
 
@@ -28,9 +29,20 @@ app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
 
+// VIEW ENGINE SETUP
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+//serve Static files
+app.use(express.static(path.join(__dirname, '../public')));
+
 // Routes
 app.get('/health', (_req: Request, res: Response) => {
     res.json({ ok: true });
+});
+//server home page
+app.get('/', (req, res) => {
+    res.render('index');
 });
 
 app.use('/auth', authRoute);

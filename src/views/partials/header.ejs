@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeTalk</title>
+    <link rel="stylesheet" href="/css/style.css"> </head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="/" class="logo">NodeTalk</a>
+            <ul class="nav-links">
+                <% if (locals.currentUser) { %>
+                    <li><a href="/posts">Feed</a></li>
+                    <li><a href="/auth/me">Profile</a></li>
+                    <li>
+                        <form action="/auth/logout" method="POST" style="display:inline;">
+                            <button type="submit" class="btn-link">Logout</button>
+                        </form>
+                    </li>
+                <% } else { %>
+                    <li><a href="/auth/login">Login</a></li>
+                    <li><a href="/auth/signup">Sign Up</a></li>
+                <% } %>
+            </ul>
+        </div>
+    </nav>
+    <div class="container main-content">
