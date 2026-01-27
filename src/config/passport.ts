@@ -1,11 +1,11 @@
+import 'dotenv/config';
+
 import passport from 'passport';
 import bcrypt from 'bcryptjs';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as GitHubStrategy } from 'passport-github2';
-import { PrismaClient } from '@prisma/client';
+import prisma from './prisma';
 import crypto from 'crypto';
-
-const prisma = new PrismaClient();
 
 passport.use(
     new LocalStrategy(
@@ -118,11 +118,11 @@ passport.use(
 );
 
 // store only the id of user
-passport.serializeUser((user, done) => {
+passport.serializeUser<number>((user, done) => {
     done(null, user.id);
 });
 
-passport.deserializeUser(async (id: number, done) => {
+passport.deserializeUser<number>(async (id, done) => {
     try {
         const user = await prisma.user.findUnique({
             where: { id: id },
@@ -134,7 +134,7 @@ passport.deserializeUser(async (id: number, done) => {
                 isPrivate: true,
             },
         });
-        done(null, user);
+        done(null, user ?? false);
     } catch (error) {
         done(error);
     }

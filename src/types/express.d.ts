@@ -1,8 +1,12 @@
-import type { User as PrismaUser } from "../../generated/prisma";
-
 declare global {
     namespace Express {
-        interface User extends PrismaUser {}
+        interface User {
+            id: number;
+            username: string;
+            email: string;
+            avatarUrl: string;
+            isPrivate: boolean;
+        }
     }
 }
 
