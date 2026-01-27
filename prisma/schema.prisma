@@ -16,6 +16,7 @@ enum FollowStatus {
 
 model User {
     id        Int     @id @default(autoincrement())
+    githubId  String? @unique
     username  String  @unique
     email     String  @unique
     password  String
