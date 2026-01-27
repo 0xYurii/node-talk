@@ -1,0 +1,17 @@
+<%- include('../partials/header') %>
+<main class="auth auth-me">
+    <h1>Your Profile</h1>
+    <% if (user) { %>
+        <div class="profile-card">
+            <p><strong>Username:</strong> <%= user.username %></p>
+            <p><strong>Email:</strong> <%= user.email %></p>
+            <p><strong>Private:</strong> <%= user.isPrivate ? 'Yes' : 'No' %></p>
+            <% if (user.avatarUrl) { %>
+                <img src="<%= user.avatarUrl %>" alt="Avatar" style="max-width: 120px; border-radius: 50%;" />
+            <% } %>
+        </div>
+    <% } else { %>
+        <p>No user found.</p>
+    <% } %>
+</main>
+<%- include('../partials/footer') %>

@@ -1,6 +1,7 @@
-import session from "express-session";
-import connectPgsimple from "connect-pg-simple";
-import pg from "pg";
+import 'dotenv/config';
+import session from 'express-session';
+import connectPgsimple from 'connect-pg-simple';
+import pg from 'pg';
 
 const PgStore = connectPgsimple(session);
 
@@ -11,16 +12,17 @@ const pool = new pg.Pool({
 const sessionMiddleware = session({
     store: new PgStore({
         pool,
-        tableName: "session",
+        tableName: 'session',
+        createTableIfMissing: true,
     }),
-    secret: process.env.SESSION_SECRET || "dev-secret",
+    secret: process.env.SESSION_SECRET || 'dev-secret',
     resave: false,
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: process.env.NODE_ENV === 'production',
         maxAge: 1000 * 60 * 60 * 24 * 7,
-        sameSite: "lax",
+        sameSite: 'lax',
     },
 });
 

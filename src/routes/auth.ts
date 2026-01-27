@@ -26,6 +26,11 @@ authRoute.get('/signup', (_req: Request, res: Response) => {
     res.render('auth/signup');
 });
 
+// guest login (view + action)
+authRoute.get('/guest', (_req: Request, res: Response) => {
+    res.render('auth/guest');
+});
+
 //log out route
 authRoute.post('/logout', (req: Request, res: Response) => {
     req.logout((err) => {
@@ -34,11 +39,18 @@ authRoute.post('/logout', (req: Request, res: Response) => {
     });
 });
 
-//github login
-authRoute.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
+authRoute.get('/logout', (_req: Request, res: Response) => {
+    res.render('auth/logout');
+});
+
+//github login (view + action)
+authRoute.get('/github', (_req: Request, res: Response) => {
+    res.render('auth/github');
+});
+authRoute.get('/github/start', passport.authenticate('github', { scope: ['user:email'] }));
 authRoute.get(
     '/github/callback',
-    passport.authenticate('github', { failureRedirect: '/login' }),
+    passport.authenticate('github', { failureRedirect: '/auth/login' }),
     (req: Request, res: Response) => {
         // Successful authentication, redirect home.
         res.redirect('/');
@@ -47,7 +59,10 @@ authRoute.get(
 //guest login
 authRoute.post('/guest', loginAsGuest);
 
-//get current user route
-authRoute.get('/me', requireAuth, getCurrentUser);
+//get current user route (view + api)
+authRoute.get('/me', requireAuth, (req: Request, res: Response) => {
+    res.render('auth/me', { user: req.user });
+});
+authRoute.get('/me/json', requireAuth, getCurrentUser);
 
 export default authRoute;

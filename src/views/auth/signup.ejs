@@ -1,8 +1,9 @@
+<%- include('../partials/header') %>
 <main class="auth auth-signup">
     <h1>Sign up</h1>
     <form method="post" action="/auth/signup">
-        <label for="name">Name</label>
-        <input id="name" name="name" type="text" autocomplete="name" required />
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" autocomplete="username" required />
 
         <label for="email">Email</label>
         <input id="email" name="email" type="email" autocomplete="email" required />
@@ -12,4 +13,11 @@
 
         <button type="submit">Create account</button>
     </form>
+
+    <div class="auth-alt">
+        <a href="/auth/login">Already have an account?</a>
+        <a href="/auth/guest">Continue as Guest</a>
+        <a href="/auth/github">Continue with GitHub</a>
+    </div>
 </main>
+<%- include('../partials/footer') %>

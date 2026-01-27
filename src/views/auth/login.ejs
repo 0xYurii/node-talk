@@ -1,3 +1,4 @@
+<%- include('../partials/header') %>
 <main class="auth auth-login">
     <h1>Login</h1>
     <form method="post" action="/auth/login">
@@ -9,4 +10,11 @@
 
         <button type="submit">Log in</button>
     </form>
+
+    <div class="auth-alt">
+        <a href="/auth/guest">Continue as Guest</a>
+        <a href="/auth/github">Continue with GitHub</a>
+        <a href="/auth/signup">Create an account</a>
+    </div>
 </main>
+<%- include('../partials/footer') %>
