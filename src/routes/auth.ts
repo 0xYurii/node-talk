@@ -78,9 +78,8 @@ authRoute.get(
 //guest login
 authRoute.post('/guest', loginAsGuest);
 
-//get current user route (api + view)
-authRoute.get('/me', requireAuth, getCurrentUser);
-authRoute.get('/me/view', requireAuth, (req: Request, res: Response) => {
+//get current user route (view + api)
+authRoute.get('/me', requireAuth, (req: Request, res: Response) => {
     res.render('auth/me', { user: req.user });
 });
 authRoute.get('/me/json', requireAuth, getCurrentUser);

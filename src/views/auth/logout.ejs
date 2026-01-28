@@ -2,7 +2,7 @@
 <main class="auth auth-logout">
     <h1>Log out</h1>
     <p>Are you sure you want to log out?</p>
-    <form method="post" action="/auth/logout">
+    <form method="post" action="/auth/logout" onsubmit="return confirm('Log out now?');">
         <button type="submit">Log out</button>
     </form>
 </main>
