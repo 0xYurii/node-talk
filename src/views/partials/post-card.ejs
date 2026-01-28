@@ -1,11 +1,13 @@
 <% const author = post.user || post.author || {}; %>
 <div class="post-card">
     <div class="post-header">
-        <img src="<%= author.avatarUrl || 'https://zqsqxpnhcgkngfjrldkn.supabase.co/storage/v1/object/public/avatars/photo_2025-08-07_09-45-39.jpg' %>" alt="avatar" class="avatar-small">
-        <div class="post-info">
-            <span class="username">@<%= author.username || 'unknown' %></span>
-            <span class="date"><%= new Date(post.createdAt).toLocaleDateString() %></span>
-        </div>
+        <a href="/users/<%= author.username || 'unknown' %>" class="author-link">
+            <img src="<%= author.avatarUrl || 'https://zqsqxpnhcgkngfjrldkn.supabase.co/storage/v1/object/public/avatars/photo_2025-08-07_09-45-39.jpg' %>" alt="avatar" class="avatar-small">
+            <div class="post-info">
+                <span class="username">@<%= author.username || 'unknown' %></span>
+                <span class="date"><%= new Date(post.createdAt).toLocaleDateString() %></span>
+            </div>
+        </a>
 
         <% if (locals.currentUser && locals.currentUser.id === post.authorId) { %>
             <form action="/posts/<%= post.id %>/delete" method="POST" class="delete-form">

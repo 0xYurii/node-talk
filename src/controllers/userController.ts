@@ -51,3 +51,37 @@ export const followUser = asyncHandler(async (req: Request, res: Response) => {
     });
     res.redirect('/users');
 });
+
+//get a User Profile
+export const getUserPofile = asyncHandler(async (req: Request, res: Response) => {
+    const myId = (req.user as any).id;
+    const username = (req.params as any).username;
+
+    //fetch user information + the relation
+    const user = await prisma.user.findUnique({
+        where: { username: username },
+        include: {
+            posts: {
+                orderBy: { createdAt: 'asc' },
+                include: {
+                    user: { select: { username: true, avatarUrl: true } },
+                    _count: { select: { likes: true, comments: true } },
+                },
+            },
+            _count: { select: { followers: true, following: true } },
+
+            //check if I follow him
+            followers: {
+                where: { followerId: myId },
+            },
+        },
+    });
+
+    if (!user) return res.status(404).render('404', { message: 'User not found' });
+
+    //check personl relation
+    const isMe = user.id === myId;
+    const isFollowing = user.followers.length > 0;
+
+    res.render('users/show', { profileUser: user, isMe, isFollowing });
+});

@@ -1,0 +1,47 @@
+<%- include('../partials/header') %>
+
+<div class="profile-header">
+    <div class="profile-cover">
+        </div>
+
+    <div class="profile-info-container">
+        <img src="<%= profileUser.avatarUrl %>" alt="<%= profileUser.username %>" class="avatar-large">
+
+        <div class="profile-details">
+            <h1>@<%= profileUser.username %></h1>
+
+            <div class="stats">
+                <span><strong><%= profileUser._count.posts %></strong> Posts</span>
+                <span><strong><%= profileUser._count.followers %></strong> Followers</span>
+                <span><strong><%= profileUser._count.following %></strong> Following</span>
+            </div>
+
+            <div class="profile-actions">
+                <% if (isMe) { %>
+                    <a href="/settings" class="btn-outline">Edit Profile</a>
+                <% } else { %>
+                    <form action="/users/<%= profileUser.id %>/follow" method="POST">
+                        <% if (isFollowing) { %>
+                            <button type="submit" class="btn-secondary">Unfollow</button>
+                        <% } else { %>
+                            <button type="submit" class="btn-primary">Follow</button>
+                        <% } %>
+                    </form>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="profile-feed">
+    <h2>Posts</h2>
+    <% if (profileUser.posts.length === 0) { %>
+        <p class="empty-state">No posts yet.</p>
+    <% } else { %>
+        <% profileUser.posts.forEach(post => { %>
+            <%- include('../partials/post-card', { post: post }) %>
+        <% }) %>
+    <% } %>
+</div>
+
+<%- include('../partials/footer') %>
