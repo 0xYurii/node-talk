@@ -5,7 +5,7 @@ import { asyncHandler } from '../utils/asyncHandler';
 //get feed
 export const getFeed = asyncHandler(async (req: Request, res: Response) => {
     if (!req.user) return res.redirect('/auth/login');
-    const userId = (req.user as { id: number }).id;
+    const userId = req.user.id;
 
     //A. find how i'm following
     const following = await prisma.follow.findMany({
@@ -52,7 +52,7 @@ export const createPost = asyncHandler(async (req: Request, res: Response) => {
         data: {
             title,
             content,
-            authorId: (req.user! as { id: number }).id,
+            authorId: req.user.id,
         },
     });
 
@@ -69,7 +69,7 @@ export const deletePost = asyncHandler(async (req: Request, res: Response) => {
         where: { id: postId },
     });
 
-    if (!post || post.authorId !== (req.user! as { id: number }).id) {
+    if (!post || post.authorId !== req.user.id) {
         return res.status(403).send('Unauthorized');
     }
 
@@ -80,7 +80,7 @@ export const deletePost = asyncHandler(async (req: Request, res: Response) => {
 //Toggle like
 export const toggleLike = asyncHandler(async (req: Request, res: Response) => {
     const postId = parseInt((req.params as any).id);
-    const myId = (req.user as any).id;
+    const myId = req.user.id;
 
     const existingLike = await prisma.like.findUnique({
         where: {
@@ -118,7 +118,7 @@ export const toggleLike = asyncHandler(async (req: Request, res: Response) => {
 
 //creat a comment
 export const creatComment = asyncHandler(async (req: Request, res: Response) => {
-    const userId = (req.user as any).id;
+    const userId = req.user.id;
     const postId = parseInt((req.params as any).id);
     const { content } = req.body;
 
@@ -139,7 +139,7 @@ export const creatComment = asyncHandler(async (req: Request, res: Response) => 
 //get single post
 export const getPostDetails = asyncHandler(async (req: Request, res: Response) => {
     const postId = parseInt((req.params as any).id);
-    const userId = (req.user as any).id;
+    const userId = req.user.id;
 
     const post = await prisma.post.findUnique({
         where: { id: postId },

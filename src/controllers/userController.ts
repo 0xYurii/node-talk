@@ -5,7 +5,7 @@ import { asyncHandler } from '../utils/asyncHandler';
 //discover users to follow
 export const listUsers = asyncHandler(async (req: Request, res: Response) => {
     //exlcude me
-    const myId = (req.user as any).id;
+    const myId = req.user.id;
     //exclude who i'm following
     const following = await prisma.follow.findMany({
         where: { followerId: myId },
@@ -30,7 +30,7 @@ export const listUsers = asyncHandler(async (req: Request, res: Response) => {
 // follow users
 export const followUser = asyncHandler(async (req: Request, res: Response) => {
     const targetId = parseInt((req.params as any).id);
-    const myId = (req.user as any).id;
+    const myId = req.user.id;
     if (targetId == myId) {
         return res.status(400).send('You cannot follow yourself.');
     }
@@ -54,7 +54,7 @@ export const followUser = asyncHandler(async (req: Request, res: Response) => {
 
 //get a User Profile
 export const getUserPofile = asyncHandler(async (req: Request, res: Response) => {
-    const myId = (req.user as any).id;
+    const myId = req.user.id;
     const username = (req.params as any).username;
 
     //fetch user information + the relation
