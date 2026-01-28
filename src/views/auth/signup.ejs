@@ -1,6 +1,9 @@
 <%- include('../partials/header') %>
 <main class="auth auth-signup">
     <h1>Sign up</h1>
+    <% if (error) { %>
+        <div class="alert"><%= error %></div>
+    <% } %>
     <form method="post" action="/auth/signup">
         <label for="username">Username</label>
         <input id="username" name="username" type="text" autocomplete="username" required />

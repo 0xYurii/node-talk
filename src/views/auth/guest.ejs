@@ -2,6 +2,9 @@
 <main class="auth auth-guest">
     <h1>Continue as Guest</h1>
     <p>You will be signed in with the shared guest account.</p>
+    <% if (error) { %>
+        <div class="alert"><%= error %></div>
+    <% } %>
     <form method="post" action="/auth/guest">
         <button type="submit">Sign in as Guest</button>
     </form>

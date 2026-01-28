@@ -17,8 +17,11 @@ passport.use(
             done: (err: any, user?: any, info?: { message: string }) => void,
         ) => {
             try {
+                const normalizedEmail = String(email || '')
+                    .trim()
+                    .toLowerCase();
                 const user = await prisma.user.findUnique({
-                    where: { email },
+                    where: { email: normalizedEmail },
                 });
 
                 if (!user)

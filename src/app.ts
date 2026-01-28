@@ -29,6 +29,10 @@ app.use(
 app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
+app.use((req, res, next) => {
+    res.locals.currentUser = req.user || null;
+    next();
+});
 
 // VIEW ENGINE SETUP
 app.set('view engine', 'ejs');
@@ -43,6 +47,7 @@ app.get('/health', (_req: Request, res: Response) => {
 });
 //server home page
 app.get('/', (req, res) => {
+    if (req.user) return res.redirect('/posts');
     res.render('index');
 });
 

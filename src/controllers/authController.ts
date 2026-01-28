@@ -4,6 +4,7 @@ import { asyncHandler } from '../utils/asyncHandler.ts';
 import prisma from '../config/prisma';
 
 export const signup = asyncHandler(async (req: Request, res: Response) => {
+    const wantsHtml = req.headers.accept?.includes('text/html');
     const email = String(req.body.email || '')
         .trim()
         .toLowerCase();
@@ -12,6 +13,9 @@ export const signup = asyncHandler(async (req: Request, res: Response) => {
     const isPrivate = typeof req.body.isPrivate === 'boolean' ? req.body.isPrivate : false;
 
     if (!email || !username || !password) {
+        if (wantsHtml) {
+            return res.status(400).render('auth/signup', { error: 'Missing fields' });
+        }
         return res.status(400).json({ error: 'Missing fields' });
     }
 
@@ -21,6 +25,9 @@ export const signup = asyncHandler(async (req: Request, res: Response) => {
     ]);
 
     if (emailExists || usernameExists) {
+        if (wantsHtml) {
+            return res.status(400).render('auth/signup', { error: 'User already exists' });
+        }
         return res.status(400).json({ error: 'User already exists' });
     }
 
@@ -32,9 +39,18 @@ export const signup = asyncHandler(async (req: Request, res: Response) => {
 
     req.login(user, (err) => {
         if (err) {
+            if (wantsHtml) {
+                return res.status(500).render('auth/signup', { error: 'Login failed' });
+            }
             return res.status(500).json({ error: 'Login failed' });
         }
         const { password, ...userWithoutPassword } = user;
+        if (wantsHtml) {
+            if (req.session) {
+                return req.session.save(() => res.redirect('/posts'));
+            }
+            return res.redirect('/posts');
+        }
         return res
             .status(201)
             .json({ message: 'User created and logged in!', user: userWithoutPassword });
@@ -49,19 +65,32 @@ export const getCurrentUser = asyncHandler(async (req: Request, res: Response) =
 });
 
 export const loginAsGuest = asyncHandler(async (req: Request, res: Response) => {
+    const wantsHtml = req.headers.accept?.includes('text/html');
     const guest = await prisma.user.findUnique({
         where: { email: 'guest@nodetalk.com' },
     });
     if (!guest) {
+        if (wantsHtml) {
+            return res.status(500).render('auth/guest', { error: 'Guest account not configured' });
+        }
         return res.status(500).json({ error: 'Guest account not configured' });
     }
     req.login(guest, (err) => {
         if (err) {
+            if (wantsHtml) {
+                return res.status(500).render('auth/guest', { error: 'Login failed' });
+            }
             return res.status(500).json({ error: 'Login failed' });
         }
 
         //remove password before sending back
         const { password, ...userwithoutPassword } = guest;
+        if (wantsHtml) {
+            if (req.session) {
+                return req.session.save(() => res.redirect('/posts'));
+            }
+            return res.redirect('/posts');
+        }
         return res.status(200).json({
             message: 'Welcome, Guest!',
             user: userwithoutPassword,
