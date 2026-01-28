@@ -1,0 +1,24 @@
+<%- include('../partials/header') %>
+
+<div class="container">
+    <h2>Who to Follow</h2>
+
+    <div class="user-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+        <% if (users.length === 0) { %>
+            <p>You follow everyone! 🤯</p>
+        <% } else { %>
+            <% users.forEach(user => { %>
+                <div class="profile-card" style="text-align: center;">
+                    <img src="<%= user.avatarUrl %>" alt="<%= user.username %>" class="avatar-small" style="width: 80px; height: 80px; margin-bottom: 0.5rem;">
+                    <h3>@<%= user.username %></h3>
+
+                    <form action="/users/<%= user.id %>/follow" method="POST">
+                        <button type="submit" class="btn-primary btn-sm">Follow</button>
+                    </form>
+                </div>
+            <% }) %>
+        <% } %>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

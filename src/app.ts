@@ -7,6 +7,7 @@ import sessionMiddleware from './config/session';
 import passport from './config/passport';
 import path from 'path';
 import postRoute from './routes/posts';
+import userRoute from './routes/users';
 
 dotenv.config();
 
@@ -17,7 +18,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// CORS (adjust origin to your frontend)
+// CORS
 app.use(
     cors({
         origin: process.env.CLIENT_URL || 'http://localhost:5173',
@@ -54,6 +55,8 @@ app.get('/', (req, res) => {
 app.use('/auth', authRoute);
 
 app.use('/posts', postRoute);
+
+app.use('/users', userRoute);
 
 // Error handler (last)
 app.use(errorHandler);
