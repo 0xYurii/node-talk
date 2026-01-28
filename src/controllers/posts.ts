@@ -9,7 +9,7 @@ export const getFeed = asyncHandler(async (req: Request, res: Response) => {
 
     //A. find how i'm following
     const following = await prisma.follow.findMany({
-        where: { followerId: userId },
+        where: { followerId: userId, status: 'ACCEPTED' },
         select: { followingId: true },
     });
 
