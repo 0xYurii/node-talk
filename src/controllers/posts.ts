@@ -76,3 +76,85 @@ export const deletePost = asyncHandler(async (req: Request, res: Response) => {
     await prisma.post.delete({ where: { id: postId } });
     res.redirect('/posts');
 });
+
+//Toggle like
+export const toggleLike = asyncHandler(async (req: Request, res: Response) => {
+    const postId = parseInt((req.params as any).id);
+    const myId = (req.user as any).id;
+
+    const existingLike = await prisma.like.findUnique({
+        where: {
+            userId_postId: {
+                userId: myId,
+                postId: postId,
+            },
+        },
+    });
+
+    if (existingLike) {
+        //unlike it
+        await prisma.like.delete({
+            where: {
+                userId_postId: {
+                    userId: myId,
+                    postId: postId,
+                },
+            },
+        });
+    } else {
+        //like it
+        await prisma.like.create({
+            data: {
+                userId: myId,
+                postId: postId,
+            },
+        });
+    }
+
+    // return the user where they came from
+    const referer = req.headers.referer || '/posts';
+    res.redirect(referer);
+});
+
+//creat a comment
+export const creatComment = asyncHandler(async (req: Request, res: Response) => {
+    const userId = (req.user as any).id;
+    const postId = parseInt((req.params as any).id);
+    const { content } = req.body;
+
+    if (!content || content.trim() == '') {
+        return res.status(400).redirect(`/posts/${postId}`);
+    }
+
+    await prisma.comment.create({
+        data: {
+            content: content,
+            userId: userId,
+            postId: postId,
+        },
+    });
+    res.redirect(`/posts/${postId}`);
+});
+
+//get single post
+export const getPostDetails = asyncHandler(async (req: Request, res: Response) => {
+    const postId = parseInt((req.params as any).id);
+    const userId = (req.user as any).id;
+
+    const post = await prisma.post.findUnique({
+        where: { id: postId },
+        include: {
+            user: { select: { username: true, avatarUrl: true } },
+            comments: {
+                include: { user: { select: { username: true, avatarUrl: true } } },
+                orderBy: { createdAt: 'asc' },
+            },
+            _count: { select: { likes: true, comments: true } },
+            likes: { where: { userId: userId }, select: { id: true } },
+        },
+    });
+
+    if (!post) return res.status(404).send('Post not found');
+
+    res.render('posts/show', { post, comments: post.comments });
+});

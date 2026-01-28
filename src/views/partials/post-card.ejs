@@ -23,12 +23,20 @@
 
     <div class="post-footer">
         <div class="interactions">
-            <button class="btn-like <%= post.likes && post.likes.length > 0 ? 'liked' : '' %>">
-                ❤️ <%= post._count ? post._count.likes : 0 %>
-            </button>
-            <a href="/posts/<%= post.id %>" class="btn-comment">
-                💬 <%= post._count ? post._count.comments : 0 %>
-            </a>
-        </div>
+                    <form action="/posts/<%= post.id %>/like" method="POST" style="display: inline;">
+                        <button type="submit" class="btn-like <%= post.likes && post.likes.length > 0 ? 'liked' : '' %>">
+                            <% if (post.likes && post.likes.length > 0) { %>
+                                ❤️
+                            <% } else { %>
+                                🤍
+                            <% } %>
+                            <%= post._count ? post._count.likes : 0 %>
+                        </button>
+                    </form>
+
+                    <a href="/posts/<%= post.id %>" class="btn-comment">
+                        💬 <%= post._count ? post._count.comments : 0 %>
+                    </a>
+                </div>
     </div>
 </div>

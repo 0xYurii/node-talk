@@ -9,6 +9,15 @@
     <% } else { %>
         <%- include('../partials/post-card', { post: post }) %>
 
+        <section class="add-comment">
+            <form action="/posts/<%= post.id %>/comments" method="POST">
+                <textarea name="content" rows="2" placeholder="Write a comment..." required></textarea>
+                <div style="text-align: right; margin-top: 0.5rem;">
+                    <button type="submit" class="btn-sm btn-primary">Reply</button>
+                </div>
+            </form>
+        </section>
+
         <section class="comments">
             <h3>Comments</h3>
             <% if (!comments || comments.length === 0) { %>

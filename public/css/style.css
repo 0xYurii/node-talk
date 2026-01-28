@@ -16,7 +16,7 @@
 
 body {
     margin: 0;
-    font-family: "IBM Plex Mono", "Fira Mono", "SFMono-Regular", Menlo, monospace;
+    font-family: 'IBM Plex Mono', 'Fira Mono', 'SFMono-Regular', Menlo, monospace;
     background: radial-gradient(circle at top right, var(--bg-accent), transparent 45%), var(--bg);
     color: var(--text);
     line-height: 1.6;
@@ -105,7 +105,10 @@ button {
     border-radius: 8px;
     font-size: 0.95rem;
     cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        background 0.15s ease;
 }
 
 .btn:hover,
@@ -299,6 +302,21 @@ button:hover {
     border-radius: 12px;
     padding: 1.5rem;
     background: var(--panel);
+}
+
+.add-comment textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fafafa;
+    resize: vertical;
+}
+
+.add-comment {
+    margin: 1.5rem 0;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px dashed var(--border);
 }
 
 .comments {
