@@ -2,8 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import prisma from '../config/prisma';
 
 export const authorizePostAccess = async (req: Request, res: Response, next: NextFunction) => {
-    const idParam = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    const postId = Number.parseInt(idParam, 10);
+    const postId = Number(req.params.id);
     if (Number.isNaN(postId)) {
         return res.status(400).send('Invalid post id');
     }

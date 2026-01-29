@@ -61,8 +61,7 @@ export const createPost = asyncHandler(async (req: Request, res: Response) => {
 
 //delete post
 export const deletePost = asyncHandler(async (req: Request, res: Response) => {
-    const idParam = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
-    const postId = Number.parseInt(idParam, 10);
+    const postId = Number(req.params.id);
 
     //security check
     const post = await prisma.post.findUnique({
@@ -79,7 +78,7 @@ export const deletePost = asyncHandler(async (req: Request, res: Response) => {
 
 //Toggle like
 export const toggleLike = asyncHandler(async (req: Request, res: Response) => {
-    const postId = parseInt((req.params as any).id);
+    const postId = Number(req.params.id);
     const myId = req.user.id;
 
     const existingLike = await prisma.like.findUnique({
@@ -119,7 +118,7 @@ export const toggleLike = asyncHandler(async (req: Request, res: Response) => {
 //creat a comment
 export const creatComment = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.user.id;
-    const postId = parseInt((req.params as any).id);
+    const postId = Number(req.params.id);
     const { content } = req.body;
 
     if (!content || content.trim() == '') {

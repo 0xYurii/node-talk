@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { requireAuth } from '../middleware/requireAuth';
 import { uploads } from '../config/multer';
+import { validate } from '../middleware/validate';
+import { idParamSchema } from '../validators/common';
 import {
     listUsers,
     followUser,
@@ -20,11 +22,11 @@ router.use(requireAuth);
 router.get('/settings', getEditProfile);
 router.post('/settings', uploads.single('avatar'), updateProfile);
 router.get('/requests', listFollowRequests);
-router.post('/requests/:id/accept', acceptFollowRequest);
-router.post('/requests/:id/reject', rejectFollowRequest);
+router.post('/requests/:id/accept', validate(idParamSchema, 'params'), acceptFollowRequest);
+router.post('/requests/:id/reject', validate(idParamSchema, 'params'), rejectFollowRequest);
 
 router.get('/', listUsers);
-router.post('/:id/follow', followUser);
+router.post('/:id/follow', validate(idParamSchema, 'params'), followUser);
 router.get('/:username', getUserPofile);
 
 export default router;

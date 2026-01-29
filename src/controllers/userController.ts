@@ -31,7 +31,7 @@ export const listUsers = asyncHandler(async (req: Request, res: Response) => {
 
 // follow users
 export const followUser = asyncHandler(async (req: Request, res: Response) => {
-    const targetId = parseInt((req.params as any).id);
+    const targetId = Number(req.params.id);
     const myId = req.user.id;
     if (targetId == myId) {
         return res.status(400).send('You cannot follow yourself.');
@@ -86,7 +86,7 @@ export const listFollowRequests = asyncHandler(async (req: Request, res: Respons
 
 export const acceptFollowRequest = asyncHandler(async (req: Request, res: Response) => {
     const myId = req.user.id;
-    const followId = parseInt((req.params as any).id);
+    const followId = Number(req.params.id);
 
     const request = await prisma.follow.findUnique({ where: { id: followId } });
     if (!request || request.followingId !== myId) {
@@ -103,7 +103,7 @@ export const acceptFollowRequest = asyncHandler(async (req: Request, res: Respon
 
 export const rejectFollowRequest = asyncHandler(async (req: Request, res: Response) => {
     const myId = req.user.id;
-    const followId = parseInt((req.params as any).id);
+    const followId = Number(req.params.id);
 
     const request = await prisma.follow.findUnique({ where: { id: followId } });
     if (!request || request.followingId !== myId) {
