@@ -138,11 +138,11 @@ export const creatComment = asyncHandler(async (req: Request, res: Response) => 
 
 //get single post
 export const getPostDetails = asyncHandler(async (req: Request, res: Response) => {
-    const postId = parseInt((req.params as any).id);
     const userId = req.user.id;
+    const post = res.locals.post;
 
-    const post = await prisma.post.findUnique({
-        where: { id: postId },
+    const postWithComments = await prisma.post.findUnique({
+        where: { id: post.id },
         include: {
             user: { select: { username: true, avatarUrl: true } },
             comments: {
@@ -154,7 +154,7 @@ export const getPostDetails = asyncHandler(async (req: Request, res: Response) =
         },
     });
 
-    if (!post) return res.status(404).send('Post not found');
+    if (!postWithComments) return res.status(404).send('Post not found');
 
-    res.render('posts/show', { post, comments: post.comments });
+    res.render('posts/show', { post: postWithComments, comments: postWithComments.comments });
 });
