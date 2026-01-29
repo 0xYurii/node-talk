@@ -1,7 +1,7 @@
 {
     "name": "nodetalk",
     "version": "1.0.0",
-    "description": "",
+    "description": "The social network for developers who read documentation",
     "main": "index.js",
     "directories": {
         "test": "tests"
@@ -20,7 +20,7 @@
         "url": "git+https://github.com/0xYurii/node-talk.git"
     },
     "keywords": [],
-    "author": "",
+    "author": "Younes",
     "license": "ISC",
     "type": "commonjs",
     "bugs": {
@@ -44,12 +44,15 @@
     "dependencies": {
         "@prisma/adapter-pg": "^7.3.0",
         "@prisma/client": "^7.3.0",
+        "@supabase/supabase-js": "^2.93.3",
+        "@types/multer": "^2.0.0",
         "@types/passport-github2": "^1.2.9",
         "bcryptjs": "^3.0.3",
         "connect-pg-simple": "^10.0.0",
         "cors": "^2.8.6",
         "express": "^5.2.1",
         "express-session": "^1.19.0",
+        "multer": "^2.0.2",
         "passport": "^0.7.0",
         "passport-github2": "^0.1.12",
         "passport-local": "^1.0.0",

@@ -9,7 +9,7 @@
         </div>
     <% } %>
 
-    <form action="/users/settings" method="POST">
+    <form action="/users/settings" method="POST" enctype="multipart/form-data">
         <div>
             <label for="username">Username</label>
             <input type="text" id="username" name="username" value="<%= user.username %>" required>
@@ -19,7 +19,12 @@
         </div>
 
         <div>
-            <label for="avatarUrl">Avatar URL</label>
+            <label for="avatar">Avatar Upload</label>
+            <input type="file" id="avatar" name="avatar" accept="image/*">
+        </div>
+
+        <div>
+            <label for="avatarUrl">Avatar URL (optional)</label>
             <input type="url" id="avatarUrl" name="avatarUrl" value="<%= user.avatarUrl %>" placeholder="https://...">
             <% if (locals.error && error.avatarUrl) { %>
                 <small style="color: red;"><%= error.avatarUrl[0] %></small>

@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { requireAuth } from '../middleware/requireAuth';
+import { uploads } from '../config/multer';
 import {
     listUsers,
     followUser,
@@ -17,7 +18,7 @@ router.use(requireAuth);
 
 // Define specific routes BEFORE dynamic ones
 router.get('/settings', getEditProfile);
-router.post('/settings', updateProfile);
+router.post('/settings', uploads.single('avatar'), updateProfile);
 router.get('/requests', listFollowRequests);
 router.post('/requests/:id/accept', acceptFollowRequest);
 router.post('/requests/:id/reject', rejectFollowRequest);

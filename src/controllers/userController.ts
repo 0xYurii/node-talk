@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import prisma from '../config/prisma';
 import { asyncHandler } from '../utils/asyncHandler';
+import { supabase } from '../config/supabase';
 import { updateProfileSchema } from '../validators/userValidator';
 
 //discover users to follow
@@ -194,12 +195,40 @@ export const updateProfile = asyncHandler(async (req: Request, res: Response) =>
         }
     }
 
+    let avatarUrlToSave = avatarUrl || undefined;
+
+    if (req.file) {
+        const ext =
+            req.file.originalname.split('.').pop()?.toLowerCase() ||
+            req.file.mimetype.split('/')[1] ||
+            'png';
+        const filePath = `avatars/${req.user.id}-${Date.now()}.${ext}`;
+
+        const { data, error } = await supabase.storage
+            .from('uploads')
+            .upload(filePath, req.file.buffer, {
+                contentType: req.file.mimetype,
+                upsert: true,
+            });
+
+        if (error) {
+            return res.status(500).render('users/edit', {
+                user: { ...req.user, ...req.body },
+                error: { avatarUrl: [error.message] },
+                success: false,
+            });
+        }
+
+        const { data: publicUrl } = supabase.storage.from('uploads').getPublicUrl(data.path);
+        avatarUrlToSave = publicUrl.publicUrl;
+    }
+
     //change the data
     await prisma.user.update({
         where: { id: myId },
         data: {
             username,
-            avatarUrl: avatarUrl || undefined,
+            avatarUrl: avatarUrlToSave,
             isPrivate,
         },
     });
