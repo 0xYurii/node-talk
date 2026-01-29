@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import prisma from '../config/prisma';
 import { asyncHandler } from '../utils/asyncHandler';
+import { updateProfileSchema } from '../validators/userValidator';
 
 //discover users to follow
 export const listUsers = asyncHandler(async (req: Request, res: Response) => {
@@ -147,4 +148,60 @@ export const getUserPofile = asyncHandler(async (req: Request, res: Response) =>
     const isPending = relation?.status === 'PENDING';
 
     res.render('users/show', { profileUser: user, isMe, isFollowing, isPending });
+});
+
+//edit profile page
+// GET user profile edit page
+export const getEditProfile = asyncHandler(async (req: Request, res: Response) => {
+    if (!req.user) return res.redirect('/auth/login');
+    res.render('users/edit', {
+        user: req.user,
+        error: {},
+        success: req.query.success,
+    });
+});
+
+//edit the page
+export const updateProfile = asyncHandler(async (req: Request, res: Response) => {
+    if (!req.user) return res.redirect('/auth/login');
+
+    //validation using Zod
+    const result = updateProfileSchema.safeParse(req.body);
+
+    //check if success
+    if (!result.success) {
+        const formattedError = result.error.flatten().fieldErrors;
+        return res.status(400).render('users/edit', {
+            user: req.user,
+            error: formattedError,
+            success: false,
+        });
+    }
+    const myId = req.user.id;
+    const { username, avatarUrl, isPrivate } = result.data;
+
+    //CHECK UNIQUENESS if username changed
+    if (username !== req.user.username) {
+        const existing = await prisma.user.findUnique({
+            where: { username: username },
+        });
+        if (existing) {
+            return res.status(400).render('users/edit', {
+                user: { ...req.user, ...req.body },
+                error: { username: ['Username already existed'] },
+                success: false,
+            });
+        }
+    }
+
+    //change the data
+    await prisma.user.update({
+        where: { id: myId },
+        data: {
+            username,
+            avatarUrl: avatarUrl || undefined,
+            isPrivate,
+        },
+    });
+    res.redirect('/users/settings?success=true');
 });

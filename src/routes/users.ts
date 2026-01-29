@@ -7,16 +7,22 @@ import {
     listFollowRequests,
     acceptFollowRequest,
     rejectFollowRequest,
+    getEditProfile,
+    updateProfile,
 } from '../controllers/userController';
 
 const router = Router();
 
 router.use(requireAuth);
 
-router.get('/', listUsers);
+// Define specific routes BEFORE dynamic ones
+router.get('/settings', getEditProfile);
+router.post('/settings', updateProfile);
 router.get('/requests', listFollowRequests);
 router.post('/requests/:id/accept', acceptFollowRequest);
 router.post('/requests/:id/reject', rejectFollowRequest);
+
+router.get('/', listUsers);
 router.post('/:id/follow', followUser);
 router.get('/:username', getUserPofile);
 

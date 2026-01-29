@@ -1,0 +1,41 @@
+<%- include('../partials/header') %>
+
+<div class="auth">
+    <h1>Edit Profile</h1>
+
+    <% if (locals.success) { %>
+        <div class="alert" style="background: #dcfce7; border-color: #22c55e; color: #14532d;">
+            Profile updated successfully!
+        </div>
+    <% } %>
+
+    <form action="/users/settings" method="POST">
+        <div>
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" value="<%= user.username %>" required>
+            <% if (locals.error && error.username) { %>
+                <small style="color: red;"><%= error.username[0] %></small>
+            <% } %>
+        </div>
+
+        <div>
+            <label for="avatarUrl">Avatar URL</label>
+            <input type="url" id="avatarUrl" name="avatarUrl" value="<%= user.avatarUrl %>" placeholder="https://...">
+            <% if (locals.error && error.avatarUrl) { %>
+                <small style="color: red;"><%= error.avatarUrl[0] %></small>
+            <% } %>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; align-items: center; margin-top: 0.5rem;">
+            <input type="checkbox" id="isPrivate" name="isPrivate" style="width: auto;" <%= user.isPrivate ? 'checked' : '' %>>
+            <label for="isPrivate" style="margin: 0;">Make account private</label>
+        </div>
+
+        <div class="actions" style="margin-top: 1.5rem;">
+            <button type="submit" class="btn-primary">Save Changes</button>
+            <a href="/users/<%= user.username %>" class="btn-outline">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<%- include('../partials/footer') %>

@@ -18,7 +18,7 @@
 
             <div class="profile-actions">
                 <% if (isMe) { %>
-                    <a href="/settings" class="btn-outline">Edit Profile</a>
+                    <a href="/users/settings" class="btn-outline">Edit Profile</a>
                 <% } else { %>
                     <form action="/users/<%= profileUser.id %>/follow" method="POST">
                         <% if (isFollowing) { %>
