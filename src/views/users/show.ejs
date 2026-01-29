@@ -23,6 +23,8 @@
                     <form action="/users/<%= profileUser.id %>/follow" method="POST">
                         <% if (isFollowing) { %>
                             <button type="submit" class="btn-secondary">Unfollow</button>
+                        <% } else if (isPending) { %>
+                            <button type="button" class="btn-outline" disabled>Requested</button>
                         <% } else { %>
                             <button type="submit" class="btn-primary">Follow</button>
                         <% } %>
