@@ -3,18 +3,20 @@ import prisma from '../config/prisma';
 import { asyncHandler } from '../utils/asyncHandler';
 import { supabase } from '../config/supabase';
 import { updateProfileSchema } from '../validators/userValidator';
+import { paginationSchema } from '../validators/common';
 
 //discover users to follow
 export const listUsers = asyncHandler(async (req: Request, res: Response) => {
-    const page = parseInt((req.query as any).page) || 1;
-    const limit = parseInt((req.query as any).limit) || 20;
+    const parsedQuery = paginationSchema.safeParse(req.query);
+    const page = parsedQuery.success ? parsedQuery.data.page : 1;
+    const limit = parsedQuery.success ? (parsedQuery.data.limit ?? 20) : 20;
     //calculate skips
     const skips = (page - 1) * limit;
     //exlcude me
     const myId = req.user!.id;
 
     //get the search query
-    const query = typeof req.query.q === 'string' ? req.query.q : '';
+    const query = parsedQuery.success ? parsedQuery.data.q || '' : '';
 
     const whereClause: any = {
         id: { not: myId },
