@@ -1,7 +1,7 @@
-import { PrismaPg } from "@prisma/adapter-pg";
-import { FollowStatus, PrismaClient } from "../generated/prisma";
-import { faker } from "@faker-js/faker";
-import bcrypt from "bcryptjs";
+import { PrismaPg } from '@prisma/adapter-pg';
+import { FollowStatus, PrismaClient } from '../generated/prisma';
+import { faker } from '@faker-js/faker';
+import bcrypt from 'bcryptjs';
 
 const adapter = new PrismaPg({
     connectionString: process.env.DATABASE_URL,
@@ -9,40 +9,42 @@ const adapter = new PrismaPg({
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-    console.log("🌱 Starting seed...");
+    console.log('🌱 Starting seed...');
 
     // 1. CLEANUP:
+    await prisma.message.deleteMany();
+    await prisma.conversation.deleteMany();
     await prisma.like.deleteMany();
     await prisma.comment.deleteMany();
     await prisma.post.deleteMany();
     await prisma.follow.deleteMany();
     await prisma.user.deleteMany();
 
-    console.log("🧹 Database cleaned.");
+    console.log('🧹 Database cleaned.');
 
     // 2. CONFIG
-    const TOTAL_USERS = 20;
+    const TOTAL_USERS = 50;
     const POSTS_PER_USER = 5;
 
-    const hashedPassword = await bcrypt.hash("password123", 10);
+    const hashedPassword = await bcrypt.hash('password123', 10);
 
     // 3. CREATE USERS
     const users = [];
 
     // Create the Guest User specifically
     const guestUser = await prisma.user.upsert({
-        where: { email: "guest@nodetalk.com" },
+        where: { email: 'guest@nodetalk.com' },
         update: {},
         create: {
-            email: "guest@nodetalk.com",
-            username: "GuestUser",
-            password: await bcrypt.hash("guestpassword123", 10),
+            email: 'guest@nodetalk.com',
+            username: 'GuestUser',
+            password: await bcrypt.hash('guestpassword123', 10),
             avatarUrl:
-                "https://zqsqxpnhcgkngfjrldkn.supabase.co/storage/v1/object/public/avatars/photo_2025-08-07_09-45-39.jpg",
+                'https://zqsqxpnhcgkngfjrldkn.supabase.co/storage/v1/object/public/avatars/photo_2025-08-07_09-45-39.jpg',
             isPrivate: false,
         },
     });
-    console.log("👻 Guest user ready.");
+    console.log('👻 Guest user ready.');
 
     for (let i = 0; i < TOTAL_USERS; i++) {
         // Generate a new user
@@ -124,7 +126,45 @@ async function main() {
         }
     }
 
-    console.log("🌱 Seeding finished.");
+    // 6. CREATE CONVERSATIONS + MESSAGES
+    const allUsers = [guestUser, ...users];
+    const conversationPairs = new Set<string>();
+    const TOTAL_CONVERSATIONS = 10;
+
+    for (let i = 0; i < TOTAL_CONVERSATIONS; i++) {
+        const [userA, userB] = faker.helpers.arrayElements(allUsers, 2);
+        const pairKey = userA.id < userB.id ? `${userA.id}-${userB.id}` : `${userB.id}-${userA.id}`;
+
+        if (conversationPairs.has(pairKey)) {
+            i--;
+            continue;
+        }
+
+        conversationPairs.add(pairKey);
+
+        const conversation = await prisma.conversation.create({
+            data: {
+                participants: {
+                    connect: [{ id: userA.id }, { id: userB.id }],
+                },
+            },
+        });
+
+        const messageCount = faker.number.int({ min: 3, max: 12 });
+        for (let m = 0; m < messageCount; m++) {
+            const sender = m % 2 === 0 ? userA : userB;
+            await prisma.message.create({
+                data: {
+                    content: faker.lorem.sentences({ min: 1, max: 3 }),
+                    senderId: sender.id,
+                    conversationId: conversation.id,
+                    isRead: faker.datatype.boolean(),
+                },
+            });
+        }
+    }
+
+    console.log('🌱 Seeding finished.');
 }
 
 main()
