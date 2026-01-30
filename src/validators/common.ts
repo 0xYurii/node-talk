@@ -14,3 +14,11 @@ export const paginationSchema = z.object({
         .optional()
         .refine((v) => v === undefined || /^[a-zA-Z0-9._]+$/.test(v), 'Invalid search query'),
 });
+
+export const usernameParamSchema = z.object({
+    username: z
+        .string()
+        .min(3)
+        .max(20)
+        .regex(/^[a-zA-Z0-9_.]+$/, 'Alphanumeric only'),
+});
