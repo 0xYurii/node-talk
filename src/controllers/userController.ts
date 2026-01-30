@@ -6,13 +6,15 @@ import { updateProfileSchema } from '../validators/userValidator';
 
 //discover users to follow
 export const listUsers = asyncHandler(async (req: Request, res: Response) => {
-    const {
-        page,
-        limit = 20,
-        q,
-    } = req.query as unknown as { page: number; limit?: number; q?: string };
+    const { page, limit, q } = req.query as {
+        page?: number;
+        limit?: number;
+        q?: string;
+    };
+    const pageNumber = Number.isFinite(page) ? page : 1;
+    const limitNumber = Number.isFinite(limit) ? limit : 20;
     //calculate skips
-    const skips = (page - 1) * limit;
+    const skips = (pageNumber - 1) * limitNumber;
     //exlcude me
     const myId = req.user!.id;
 
@@ -42,13 +44,17 @@ export const listUsers = asyncHandler(async (req: Request, res: Response) => {
     // 2. Fetch users who are NOT me and NOT in my following list
     const users = await prisma.user.findMany({
         where: whereClause,
-        take: limit,
+        take: limitNumber,
         skip: skips,
         orderBy: { createdAt: 'asc' },
         select: { id: true, username: true, avatarUrl: true },
     });
 
-    res.render('users/index', { users, searchQuery: query, currentPage: page });
+    res.render('users/index', {
+        users,
+        searchQuery: query,
+        currentPage: pageNumber,
+    });
 });
 
 // follow users

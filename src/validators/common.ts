@@ -5,8 +5,14 @@ export const idParamSchema = z.object({
 });
 
 export const paginationSchema = z.object({
-    page: z.coerce.number().int().positive().default(1),
-    limit: z.coerce.number().int().positive().max(200),
+    page: z.preprocess(
+        (v) => (v === '' || v === null || v === undefined ? undefined : v),
+        z.coerce.number().int().positive().default(1),
+    ),
+    limit: z.preprocess(
+        (v) => (v === '' || v === null || v === undefined ? undefined : v),
+        z.coerce.number().int().positive().max(200).default(20),
+    ),
     q: z
         .string()
         .trim()

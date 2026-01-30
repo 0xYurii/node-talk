@@ -17,12 +17,14 @@ export const getFeed = asyncHandler(async (req: Request, res: Response) => {
     const followingIds = following.map((follow) => follow.followingId);
 
     //B. feed query
-    // select posts where ID is me or someone i'm following
+    // show my posts, public users' posts, and private users' posts only if I follow them
     const posts = await prisma.post.findMany({
         where: {
-            authorId: {
-                in: [...followingIds, userId],
-            },
+            OR: [
+                { authorId: userId },
+                { user: { isPrivate: false } },
+                { authorId: { in: followingIds }, user: { isPrivate: true } },
+            ],
         },
         orderBy: { createdAt: 'desc' },
         include: {
