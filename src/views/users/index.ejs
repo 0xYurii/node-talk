@@ -1,7 +1,20 @@
 <%- include('../partials/header') %>
 
 <div class="container">
-    <h2>Who to Follow</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2><%= locals.searchQuery ? `Results for "${searchQuery}"` : 'Who to Follow' %></h2>
+
+        <form action="/users" method="GET" style="display: flex; gap: 0.5rem;">
+            <input
+                type="text"
+                name="q"
+                placeholder="Find users..."
+                value="<%= locals.searchQuery || '' %>"
+                style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;"
+            >
+            <button type="submit" class="btn-primary btn-sm">Search</button>
+        </form>
+    </div>
 
     <div class="user-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
         <% if (users.length === 0) { %>

@@ -3,30 +3,44 @@ import prisma from '../config/prisma';
 import { asyncHandler } from '../utils/asyncHandler';
 import { supabase } from '../config/supabase';
 import { updateProfileSchema } from '../validators/userValidator';
+import { only } from 'node:test';
 
 //discover users to follow
 export const listUsers = asyncHandler(async (req: Request, res: Response) => {
     //exlcude me
-    const myId = req.user.id;
-    //exclude who i'm following
-    const following = await prisma.follow.findMany({
-        where: { followerId: myId },
-        select: { followingId: true },
-    });
+    const myId = req.user!.id;
 
-    //map to get only get the Ids
-    const onlyFollowingId = following.map((f) => f.followingId);
+    //get the search query
+    const query = typeof req.query.q === 'string' ? req.query.q : '';
+
+    const whereClause: any = {
+        id: { not: myId },
+    };
+
+    if (query) {
+        whereClause.username = {
+            contains: query,
+            mode: 'insensitive',
+        };
+    } else {
+        //exclude who i'm following
+        const following = await prisma.follow.findMany({
+            where: { followerId: myId },
+            select: { followingId: true },
+        });
+        //map to get only get the Ids
+        const onlyFollowingId = following.map((f) => f.followingId);
+        whereClause.id = { not: myId, notIn: onlyFollowingId };
+    }
 
     // 2. Fetch users who are NOT me and NOT in my following list
     const users = await prisma.user.findMany({
-        where: {
-            AND: [{ id: { not: myId } }, { id: { notIn: onlyFollowingId } }],
-        },
+        where: whereClause,
         take: 20,
         select: { id: true, username: true, avatarUrl: true },
     });
 
-    res.render('users/index', { users });
+    res.render('users/index', { users, searchQuery: query });
 });
 
 // follow users
