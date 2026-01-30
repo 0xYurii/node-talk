@@ -3,10 +3,13 @@ import prisma from '../config/prisma';
 import { asyncHandler } from '../utils/asyncHandler';
 import { supabase } from '../config/supabase';
 import { updateProfileSchema } from '../validators/userValidator';
-import { only } from 'node:test';
 
 //discover users to follow
 export const listUsers = asyncHandler(async (req: Request, res: Response) => {
+    const page = parseInt((req.query as any).page) || 1;
+    const limit = parseInt((req.query as any).limit) || 20;
+    //calculate skips
+    const skips = (page - 1) * limit;
     //exlcude me
     const myId = req.user!.id;
 
@@ -36,11 +39,13 @@ export const listUsers = asyncHandler(async (req: Request, res: Response) => {
     // 2. Fetch users who are NOT me and NOT in my following list
     const users = await prisma.user.findMany({
         where: whereClause,
-        take: 20,
+        take: limit,
+        skip: skips,
+        orderBy: { createdAt: 'asc' },
         select: { id: true, username: true, avatarUrl: true },
     });
 
-    res.render('users/index', { users, searchQuery: query });
+    res.render('users/index', { users, searchQuery: query, currentPage: page });
 });
 
 // follow users
