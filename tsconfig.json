@@ -1,6 +1,8 @@
 {
     "compilerOptions": {
         "typeRoots": ["./src/types", "./node_modules/@types"],
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
     },
     "include": ["src/**/*.ts", "src/types/**/*.d.ts"],
 }

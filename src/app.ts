@@ -1,6 +1,6 @@
 import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
-import express, { Application, Request, Response } from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { errorHandler } from './middleware/error';
@@ -56,17 +56,29 @@ app.set('views', path.join(__dirname, 'views'));
 //serve Static files
 app.use(express.static(path.join(__dirname, '../public')));
 
+// Attach Express session to Socket.IO
+io.use((socket, next) => {
+    sessionMiddleware(socket.request as any, {} as any, next as NextFunction);
+});
+
+// Passport for Socket.IO
+io.use((socket, next) => {
+    passport.initialize()(socket.request as any, {} as any, next as NextFunction);
+});
+io.use((socket, next) => {
+    passport.session()(socket.request as any, {} as any, next);
+});
+
 io.on('connection', (socket) => {
     console.log('⚡ User connected:', socket.id);
     //join a room based on userId for now
-    const userId = socket.handshake.query.userId;
-    if (userId) {
-        socket.join(`user_${userId}`);
-        console.log(`User ${userId} joined room user_${userId}`);
+    const user = (socket.request as any).user;
+    if (!user) {
+        //obtianlly reject connection
+        return socket.disconnect(true);
     }
-    socket.on('disconnect', () => {
-        console.log('User disconnected');
-    });
+    const userId = user.id;
+    socket.join(`user_${userId}`);
 });
 
 // Routes
