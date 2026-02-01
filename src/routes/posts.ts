@@ -10,14 +10,14 @@ import {
 } from '../controllers/posts';
 import { authorizePostAccess } from '../middleware/authorizePostAccess';
 import { validate } from '../middleware/validate';
-import { idParamSchema } from '../validators/common';
+import { idParamSchema, paginationSchema } from '../validators/common';
 const postRoute = Router();
 
 // Protect ALL routes here
 postRoute.use(requireAuth);
 
 //VIEWING
-postRoute.get('/', getFeed);
+postRoute.get('/', validate(paginationSchema, 'query'), getFeed);
 postRoute.get('/:id', validate(idParamSchema, 'params'), authorizePostAccess, getPostDetails);
 
 // INTERACTIONS

@@ -6,6 +6,17 @@ import { asyncHandler } from '../utils/asyncHandler';
 export const getFeed = asyncHandler(async (req: Request, res: Response) => {
     if (!req.user) return res.redirect('/auth/login');
     const userId = req.user.id;
+    const { page, limit, cursor } = req.query as {
+        page?: number;
+        limit?: number;
+        cursor?: number;
+    };
+
+    const pageNum = Number.isFinite(page) ? page : 1;
+    const limitNum = Number.isFinite(limit) ? limit : 20;
+    const cursorId = Number.isFinite(cursor) ? cursor : undefined;
+    //calculate skips (fallback when cursor is not provided)
+    const skips = (pageNum - 1) * limitNum;
 
     //A. find how i'm following
     const following = await prisma.follow.findMany({
@@ -26,7 +37,9 @@ export const getFeed = asyncHandler(async (req: Request, res: Response) => {
                 { authorId: { in: followingIds }, user: { isPrivate: true } },
             ],
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ id: 'desc' }],
+        take: limitNum + 1,
+        ...(cursorId ? { cursor: { id: cursorId }, skip: 1 } : { skip: skips }),
         include: {
             user: {
                 select: { username: true, avatarUrl: true },
@@ -40,7 +53,16 @@ export const getFeed = asyncHandler(async (req: Request, res: Response) => {
             },
         },
     });
-    res.render('posts/index', { posts });
+    let nextCursor: number | null = null;
+    let pagedPosts = posts;
+
+    if (posts.length > limitNum) {
+        const next = posts.pop();
+        nextCursor = next ? next.id : null;
+        pagedPosts = posts;
+    }
+
+    res.render('posts/index', { posts: pagedPosts, nextCursor, limit: limitNum });
 });
 
 //creat post

@@ -219,6 +219,19 @@ button:hover {
     margin-top: 0.75rem;
 }
 
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 0.5rem 0 1rem;
+}
+
+.pagination .btn-secondary {
+    padding: 0.6rem 1.2rem;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
 .post-card {
     background: var(--panel);
     border: 1px solid var(--border);

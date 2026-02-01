@@ -13,6 +13,10 @@ export const paginationSchema = z.object({
         (v) => (v === '' || v === null || v === undefined ? undefined : v),
         z.coerce.number().int().positive().max(200).default(20),
     ),
+    cursor: z.preprocess(
+        (v) => (v === '' || v === null || v === undefined ? undefined : v),
+        z.coerce.number().int().positive().optional(),
+    ),
     q: z
         .string()
         .trim()

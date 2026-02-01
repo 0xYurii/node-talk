@@ -22,6 +22,12 @@
             <% }) %>
         <% } %>
     </section>
+
+    <% if (nextCursor) { %>
+        <div class="pagination">
+            <a class="btn-secondary" href="/posts?cursor=<%= nextCursor %>&limit=<%= limit %>">Load more</a>
+        </div>
+    <% } %>
 </div>
 
 <%- include('../partials/footer') %>
