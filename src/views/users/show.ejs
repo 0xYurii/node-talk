@@ -29,6 +29,10 @@
                             <button type="submit" class="btn-primary">Follow</button>
                         <% } %>
                     </form>
+                    <form action="/chat" method="POST">
+                        <input type="hidden" name="targetId" value="<%= profileUser.id %>">
+                        <button type="submit" class="btn-outline">Message</button>
+                    </form>
                 <% } %>
             </div>
         </div>

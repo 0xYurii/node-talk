@@ -1,0 +1,40 @@
+<%- include('../partials/header') %>
+
+<section class="chat-shell">
+    <header class="chat-header">
+        <div>
+            <p class="chat-kicker">Messages</p>
+            <h1>Conversations</h1>
+        </div>
+    </header>
+
+    <div class="chat-list">
+        <% if (conversations.length === 0) { %>
+            <div class="empty-state">
+                <p>No conversations yet. Start one from a user profile.</p>
+            </div>
+        <% } else { %>
+            <% conversations.forEach((conv) => {
+                const other = conv.participants[0];
+                const lastMessage = conv.messages[0];
+            %>
+                <a class="chat-card" href="/chat/<%= conv.id %>">
+                    <img src="<%= other?.avatarUrl || '/images/avatar-fallback.png' %>" alt="<%= other?.username || 'User' %>" class="avatar-small">
+                    <div class="chat-card-body">
+                        <div class="chat-card-title">
+                            <span class="username"><%= other?.username || 'Unknown' %></span>
+                            <% if (lastMessage) { %>
+                                <span class="date"><%= new Date(lastMessage.createdAt).toLocaleString() %></span>
+                            <% } %>
+                        </div>
+                        <p class="chat-card-preview">
+                            <%= lastMessage ? lastMessage.content : 'No messages yet.' %>
+                        </p>
+                    </div>
+                </a>
+            <% }) %>
+        <% } %>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

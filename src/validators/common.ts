@@ -28,3 +28,11 @@ export const usernameParamSchema = z.object({
         .max(20)
         .regex(/^[a-zA-Z0-9_.]+$/, 'Alphanumeric only'),
 });
+
+export const startConversationSchema = z.object({
+    targetId: z.coerce.number().int().positive(),
+});
+
+export const sendMessageSchema = z.object({
+    content: z.string().trim().min(1),
+});

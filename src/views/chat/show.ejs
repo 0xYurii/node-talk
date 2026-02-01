@@ -1,0 +1,39 @@
+<%- include('../partials/header') %>
+
+<% const me = locals.currentUser; %>
+<% const other = conversation.participants.find(p => p.id !== me.id); %>
+
+<section class="chat-shell">
+    <header class="chat-header">
+        <div class="chat-header-user">
+            <img src="<%= other?.avatarUrl || '/images/avatar-fallback.png' %>" alt="<%= other?.username || 'User' %>" class="avatar-small">
+            <div>
+                <p class="chat-kicker">Chatting with</p>
+                <h1><%= other?.username || 'Unknown' %></h1>
+            </div>
+        </div>
+        <a href="/chat" class="btn-link">Back to all</a>
+    </header>
+
+    <div class="chat-thread">
+        <% if (conversation.messages.length === 0) { %>
+            <div class="empty-state">
+                <p>No messages yet. Say hello.</p>
+            </div>
+        <% } else { %>
+            <% conversation.messages.forEach((msg) => { %>
+                <div class="chat-bubble <%= msg.senderId === me.id ? 'mine' : 'theirs' %>">
+                    <p><%= msg.content %></p>
+                    <span class="date"><%= new Date(msg.createdAt).toLocaleString() %></span>
+                </div>
+            <% }) %>
+        <% } %>
+    </div>
+
+    <form action="/chat/<%= conversation.id %>/messages" method="POST" class="chat-input">
+        <textarea name="content" rows="2" placeholder="Type a message..." required></textarea>
+        <button type="submit" class="btn-primary">Send</button>
+    </form>
+</section>
+
+<%- include('../partials/footer') %>
