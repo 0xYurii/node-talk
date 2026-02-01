@@ -33,7 +33,7 @@ export const getFeed = asyncHandler(async (req: Request, res: Response) => {
         where: {
             OR: [
                 { authorId: userId },
-                { user: { isPrivate: false } },
+
                 { authorId: { in: followingIds }, user: { isPrivate: true } },
             ],
         },
