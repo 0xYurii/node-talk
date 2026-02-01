@@ -11,6 +11,7 @@
 
         <section class="add-comment">
             <form action="/posts/<%= post.id %>/comments" method="POST">
+                <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
                 <textarea name="content" rows="2" placeholder="Write a comment..." required></textarea>
                 <div style="text-align: right; margin-top: 0.5rem;">
                     <button type="submit" class="btn-sm btn-primary">Reply</button>

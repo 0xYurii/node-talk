@@ -31,6 +31,7 @@
     </div>
 
     <form action="/chat/<%= conversation.id %>/messages" method="POST" class="chat-input">
+        <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
         <textarea name="content" rows="2" placeholder="Type a message..." required></textarea>
         <button type="submit" class="btn-primary">Send</button>
     </form>

@@ -3,6 +3,7 @@
     <h1>Log out</h1>
     <p>Are you sure you want to log out?</p>
     <form method="post" action="/auth/logout" onsubmit="return confirm('Log out now?');">
+        <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
         <button type="submit">Log out</button>
     </form>
 </main>

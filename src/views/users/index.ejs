@@ -26,6 +26,7 @@
                     <h3>@<%= user.username %></h3>
 
                     <form action="/users/<%= user.id %>/follow" method="POST">
+                        <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
                         <button type="submit" class="btn-primary btn-sm">Follow</button>
                     </form>
                 </div>

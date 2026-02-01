@@ -3,6 +3,7 @@
 <div class="feed-container">
     <section class="create-post-box">
         <form action="/posts" method="POST">
+            <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
             <input type="text" name="title" placeholder="Topic title..." required class="input-title">
             <textarea name="content" placeholder="What's on your mind?" rows="3" required></textarea>
             <div class="form-footer">

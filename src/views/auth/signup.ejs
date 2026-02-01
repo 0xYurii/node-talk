@@ -5,6 +5,7 @@
         <div class="alert"><%= error %></div>
     <% } %>
     <form method="post" action="/auth/signup">
+        <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
         <label for="username">Username</label>
         <input id="username" name="username" type="text" autocomplete="username" required />
 

@@ -11,6 +11,7 @@
 
         <% if (locals.currentUser && locals.currentUser.id === post.authorId) { %>
             <form action="/posts/<%= post.id %>/delete" method="POST" class="delete-form">
+                <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
                 <button type="submit" class="btn-icon">🗑️</button>
             </form>
         <% } %>
@@ -26,6 +27,7 @@
     <div class="post-footer">
         <div class="interactions">
                     <form action="/posts/<%= post.id %>/like" method="POST" style="display: inline;">
+                        <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
                         <button type="submit" class="btn-like <%= post.likes && post.likes.length > 0 ? 'liked' : '' %>">
                             <% if (post.likes && post.likes.length > 0) { %>
                                 ❤️

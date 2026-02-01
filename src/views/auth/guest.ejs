@@ -6,6 +6,7 @@
         <div class="alert"><%= error %></div>
     <% } %>
     <form method="post" action="/auth/guest">
+        <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
         <button type="submit">Sign in as Guest</button>
     </form>
 </main>

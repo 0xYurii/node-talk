@@ -21,6 +21,7 @@
                     <a href="/users/settings" class="btn-outline">Edit Profile</a>
                 <% } else { %>
                     <form action="/users/<%= profileUser.id %>/follow" method="POST">
+                        <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
                         <% if (isFollowing) { %>
                             <button type="submit" class="btn-secondary">Unfollow</button>
                         <% } else if (isPending) { %>
@@ -30,6 +31,7 @@
                         <% } %>
                     </form>
                     <form action="/chat" method="POST">
+                        <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
                         <input type="hidden" name="targetId" value="<%= profileUser.id %>">
                         <button type="submit" class="btn-outline">Message</button>
                     </form>

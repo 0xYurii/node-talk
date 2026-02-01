@@ -11,6 +11,7 @@ import path from 'path';
 import postRoute from './routes/posts';
 import userRoute from './routes/users';
 import chatRoute from './routes/chat';
+import { csrfProtection } from './middleware/csrf';
 
 dotenv.config();
 
@@ -55,6 +56,9 @@ app.set('views', path.join(__dirname, 'views'));
 
 //serve Static files
 app.use(express.static(path.join(__dirname, '../public')));
+
+// CSRF protection for form submissions
+app.use(csrfProtection);
 
 // Attach Express session to Socket.IO
 io.use((socket, next) => {

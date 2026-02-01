@@ -19,9 +19,11 @@
 
                     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                         <form action="/users/requests/<%= request.id %>/accept" method="POST">
+                            <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
                             <button type="submit" class="btn-primary">Accept</button>
                         </form>
                         <form action="/users/requests/<%= request.id %>/reject" method="POST">
+                            <input type="hidden" name="csrfToken" value="<%= csrfToken %>">
                             <button type="submit" class="btn-outline">Reject</button>
                         </form>
                     </div>
